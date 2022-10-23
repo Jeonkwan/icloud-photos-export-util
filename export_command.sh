@@ -15,12 +15,14 @@ photos_export() {
     local OUTPUT_DIR_TEMPLATE="{created.mm}-{created.month}"
     local OUTPUT_NAME_TEMPLATE=$FILE_NAME_TEMPLATE
     local EXPORT_DIR
+    local REPORT_PATH
 
     [[ -d "$TARGET_DIR" ]] && { echo "Directory $TARGET_DIR exists."; } || { echo "Error: Directory /path/to/dir does not exists."; return 1; }
 
     if [ -z "$SEASON" ]; then
         echo "\$SEASON is empty. Export by Year."
         local EXPORT_DIR=$TARGET_DIR/${YEAR}
+        REPORT_PATH=$TARGET_DIR/${YEAR}-report.csv
         mkdir -p $EXPORT_DIR
         osxphotos export $EXPORT_DIR \
             --year $YEAR \
@@ -33,7 +35,7 @@ photos_export() {
             --retry 5 \
             --update \
             --cleanup \
-            --report $TARGET_DIR/${YEAR}-report.csv
+            --report $REPORT_PATH
     else
         echo "\$SEASON is provided. Export by Year Season."
         [[ $SEASON -eq 1 ]] && { FROM_DATE="${YEAR}-01-01"; TO_DATE="${YEAR}-03-31"; }
@@ -41,6 +43,7 @@ photos_export() {
         [[ $SEASON -eq 3 ]] && { FROM_DATE="${YEAR}-07-01"; TO_DATE="${YEAR}-09-30"; }
         [[ $SEASON -eq 4 ]] && { FROM_DATE="${YEAR}-10-01"; TO_DATE="${YEAR}-12-31"; }
         local EXPORT_DIR=$TARGET_DIR/${YEAR}-Season-${SEASON}
+        REPORT_PATH=$TARGET_DIR/${YEAR}-Season-${SEASON}-report.csv
         mkdir -p $EXPORT_DIR
         osxphotos export $EXPORT_DIR \
             --from-date "${FROM_DATE}" \
@@ -54,7 +57,7 @@ photos_export() {
             --retry 5 \
             --update \
             --cleanup \
-            --report $TARGET_DIR/${YEAR}-Season-${SEASON}-report.csv
+            --report $REPORT_PATH
     fi
     set +x
 } 

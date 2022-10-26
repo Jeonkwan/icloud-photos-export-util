@@ -8,7 +8,11 @@ setup_photo_export() {
     echo "====== Export by year ======"
     echo "photos_export <TARGET_DIR> <YEAR>"
     echo "Example:\n\t photos_export ~/Downloads/photos-export 2012\n\n"
+    echo "====== Export by season ======"
     echo "photos_export <TARGET_DIR> <YEAR> <SEASON>"
     echo "Example:\n\t photos_export ~/Downloads/photos-export 2014 1\n\n"
+    echo "====== Export by month per season ======"
+    echo "photos_export <TARGET_DIR> <YEAR> <SEASON> split"
+    echo "Example: exporting season one into 3 months\n\t photos_export ~/Downloads/photos-export 2014 1 split\n\n"
 }
 ```

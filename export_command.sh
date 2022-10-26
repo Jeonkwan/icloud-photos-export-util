@@ -27,8 +27,11 @@ photos_export() {
     [[ -d "$TARGET_DIR" ]] && { echo "Directory $TARGET_DIR exists."; } || { echo "Error: Directory /path/to/dir does not exists."; return 1; }
 
     if [ -z "$SEASON" ]; then
+        #================================================
+        #                By Year
+        #================================================
         echo "\$SEASON is empty. Export by Year."
-        local EXPORT_DIR=$TARGET_DIR/${YEAR}
+        EXPORT_DIR=$TARGET_DIR/${YEAR}
         REPORT_PATH=$TARGET_DIR/${YEAR}-report.csv
         mkdir -p $EXPORT_DIR
         osxphotos export $EXPORT_DIR \
@@ -52,10 +55,13 @@ photos_export() {
         local FROM_DATE="${YEAR}-${FROM_MONTH}-01"
         local TO_MONTH_LAST_DAY="$(get_last_day_of_month $TO_MONTH $YEAR)"
         local TO_DATE="${YEAR}-${TO_MONTH}-${TO_MONTH_LAST_DAY}"
-        local EXPORT_DIR=$TARGET_DIR/${YEAR}-Season-${SEASON}
-        REPORT_PATH=$TARGET_DIR/${YEAR}-Season-${SEASON}-report.csv
-        mkdir -p $EXPORT_DIR
+        #================================================
+        #                By Season
+        #================================================
         if [[ -z "$SPLIT_BY_MONTH" ]]; then
+	        EXPORT_DIR=$TARGET_DIR/${YEAR}-Season-${SEASON}
+            REPORT_PATH=$TARGET_DIR/${YEAR}-Season-${SEASON}-report.csv
+	        mkdir -p $EXPORT_DIR
             osxphotos export $EXPORT_DIR \
                 --from-date "${FROM_DATE}" \
                 --to-date "${TO_DATE}" \
@@ -70,6 +76,9 @@ photos_export() {
                 --cleanup \
                 --report $REPORT_PATH
         fi
+        #================================================
+        #                Season split into 3 months
+        #================================================
         if [[ "$SPLIT_BY_MONTH" == "split" ]]; then
             echo "Split by Month mode. Iterate each month for season $SEASON"
             for month in $(seq $((10#$FROM_MONTH)) $((10#$TO_MONTH))); do
@@ -77,6 +86,9 @@ photos_export() {
                 local from_date="${YEAR}-${each_month}-01"
                 local each_month_last_day="$(get_last_day_of_month $each_month $YEAR)"
                 local to_date="${YEAR}-${each_month}-${each_month_last_day}"
+		        EXPORT_DIR=$TARGET_DIR/${YEAR}-${each_month}
+		        mkdir -p $EXPORT_DIR
+		        REPORT_PATH=$TARGET_DIR/${YEAR}-${each_month}-report.csv
                 osxphotos export $EXPORT_DIR \
                     --from-date "${from_date}" \
                     --to-date "${to_date}" \
